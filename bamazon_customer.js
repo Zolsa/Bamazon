@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+require("console.table");
 
 var itemIDArray = [];
 
@@ -22,12 +23,16 @@ var runProgram = function() {
 };
 
 var displayInventory = function() {
+	var itemList = [];
 	console.log('Department Item        Cost');
 	connection.query("SELECT * FROM Products", function(err, res) {	
 		for(var i = 0; i<res.length; i++) {
-			console.log(res[i].item_id + ') ' + res[i].department_name + ' - ' + res[i].product_name + ' - ' + res[i].price);
+			itemList.push(res[i]);
+			//console.log(res[i].item_id + ') ' + res[i].department_name + ' - ' + res[i].product_name + ' - ' + res[i].price);
 			itemIDArray.push(res[i].item_id);
 		}
+		console.log('\n')
+		console.table(itemList);
 	});
 };
 
@@ -36,16 +41,17 @@ var updateQuery = function(selectedItem, quantitySelected) {
 	connection.query(query, {item_id: selectedItem}, function(err, res) {
 		// console.log(res[0].quantity);
 		if(err) {throw err;}
-		if(quantitySelected <= res[0].quantity) {
-			console.log('Your total cost is ' + res[0].price * quantitySelected);
+		if(quantitySelected <= res[0].quantity) {			
 			var query = "UPDATE Products SET quantity = " + (res[0].quantity - quantitySelected) + " WHERE item_id = " + selectedItem;
 			connection.query(query, function (err, result) {
 			    if (err) {throw err;}    
+			    console.log('Your total cost is ' + res[0].price * quantitySelected);
 			});
 		} else {
 			console.log('We only have ' + res[0].quantity + ' left');
 		}				
 	});
+	setTimeout(function(){process.exit();}, 2500);	
 };
 
 var getQuantity = function(selectedItem) {
