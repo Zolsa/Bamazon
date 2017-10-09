@@ -1,3 +1,5 @@
 # Bamazon
 
-#### Here's a video of a walkthrough of the app
+#### Here's a video walkthrough of the basic app
+
+https://github.com/Zolsa/Bamazon/blob/master/challenge1_demo.swf
